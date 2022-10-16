@@ -14,7 +14,8 @@
 #include "Bullet.h"
 //#include"ammo.h"
 #include"EnemySpawner.h"
-
+#include "Kismet/GameplayStatics.h"
+#include<particles/ParticleSystemComponent.h>
 // Sets default values
 AEnemy::AEnemy()
 {
@@ -69,6 +70,7 @@ void AEnemy::Fire()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	SetColor();
 	//获取玩家0号
 	SpaceShip = Cast<ASpaceShip>(UGameplayStatics::GetPlayerPawn(this, 0));//强转类型
 	//创建敌人开火定时器
@@ -84,6 +86,17 @@ void AEnemy::Tick(float DeltaTime)
 	{
 		//移动玩家
 		MoveTowardsPlayer();
+	}
+}
+
+void AEnemy::OnDeath()
+{
+	GEngine->AddOnScreenDebugMessage(0,3,FColor::Red,TEXT("EnemyDeath"));
+	if(FX_Boom != nullptr)
+	{
+		GetWorldTimerManager().ClearTimer(TimerHandle_BetweenShot);
+		UGameplayStatics::SpawnEmitterAtLocation(this,FX_Boom,GetActorLocation(),FRotator::ZeroRotator);
+		Destroy();
 	}
 }
 

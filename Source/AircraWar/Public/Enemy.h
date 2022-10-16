@@ -24,6 +24,9 @@ protected:
 	void Fire();
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetColor();
 protected:
 	//完全可见
 	UPROPERTY(VisibleAnywhere, Category = "Component")
@@ -63,4 +66,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void OnDeath();
 };

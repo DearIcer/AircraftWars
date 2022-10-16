@@ -186,3 +186,13 @@ void ASpaceShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ASpaceShip::EndFire);//松开结束开火
 }
 
+void ASpaceShip::OnDeath()
+{
+	GEngine->AddOnScreenDebugMessage(0,3,FColor::Red,TEXT("PlayerDeath"));
+}
+
+bool ASpaceShip::GetBDeath()
+{
+	return IsDead;
+}
+
