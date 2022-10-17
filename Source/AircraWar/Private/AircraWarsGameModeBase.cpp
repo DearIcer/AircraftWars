@@ -13,7 +13,13 @@ AAircraWarsGameModeBase::AAircraWarsGameModeBase()
 void AAircraWarsGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+	ShowHUD();
 	GEngine->AddOnScreenDebugMessage(1,3,FColor::Red,TEXT("游戏开始！ "));
+}
+
+int AAircraWarsGameModeBase::GetScore()
+{
+	return Score;
 }
 
 void AAircraWarsGameModeBase::IncreaseScore()

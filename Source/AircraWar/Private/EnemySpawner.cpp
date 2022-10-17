@@ -88,3 +88,9 @@ void AEnemySpawner::DecreaseEnemyCount()
 	}
 }
 
+int AEnemySpawner::GetEnemyCount()
+{
+	return CurrentEnemyCount;
+}
+
+

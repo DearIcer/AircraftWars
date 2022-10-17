@@ -59,4 +59,7 @@ public:
 
 	void DecreaseEnemyCount();
 
+	UFUNCTION(BlueprintCallable)
+	int GetEnemyCount();
+
 };

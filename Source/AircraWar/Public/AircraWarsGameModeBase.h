@@ -22,5 +22,8 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ShowHUD();
 public:
+	UFUNCTION(BlueprintCallable)
+	int GetScore();
+	
 	void IncreaseScore();
 };
