@@ -14,6 +14,7 @@ AEnemySpawner::AEnemySpawner()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SpawnArea = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnArea"));
 	//设置根组件
 	RootComponent = SpawnArea;
 
@@ -64,9 +65,9 @@ void AEnemySpawner::SpawnEnemy()
 	{
 		FActorSpawnParameters SpawnParameters;
 		GetWorld()->SpawnActor<AEnemy>(Enemy, GetGenerateLocation(), FRotator::ZeroRotator, SpawnParameters);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *FString::SanitizeFloat(CurrentEnemyCount));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *FString::SanitizeFloat(CurrentEnemyCount));
 		CurrentEnemyCount++;
-		UE_LOG(LogTemp, Error, TEXT("%s"), *FString::SanitizeFloat(CurrentEnemyCount));
+		//UE_LOG(LogTemp, Error, TEXT("%s"), *FString::SanitizeFloat(CurrentEnemyCount));
 	}
 	
 }
@@ -83,7 +84,7 @@ void AEnemySpawner::DecreaseEnemyCount()
 	if (CurrentEnemyCount > 0)
 	{
 		CurrentEnemyCount--;
-		UE_LOG(LogTemp, Error, TEXT("%s"), *FString::SanitizeFloat(CurrentEnemyCount));
+		//UE_LOG(LogTemp, Error, TEXT("%s"), *FString::SanitizeFloat(CurrentEnemyCount));
 	}
 }
 

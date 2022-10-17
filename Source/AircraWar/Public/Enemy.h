@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AircraWarsGameModeBase.h"
 #include "GameFramework/Actor.h"
 
 #include "Enemy.generated.h"
@@ -28,9 +29,10 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetColor();
 protected:
-	//完全可见
+	//游戏模式
+	class AAircraWarsGameModeBase* AWGameModeBase;
+	
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-	//声明碰撞组件
 	class USphereComponent* CollisionCom;
 
 	//完全可见,蓝图可见
@@ -62,6 +64,8 @@ protected:
 	//声明子弹
 	UPROPERTY(EditAnywhere, Category = "Fire")
 	TSubclassOf<ABullet> Bullet;
+
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

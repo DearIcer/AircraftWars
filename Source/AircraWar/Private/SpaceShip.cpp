@@ -125,7 +125,7 @@ void ASpaceShip::Fire()
 		GetWorld()->SpawnActor<ABullet>(Bullet, SpawnPiont2->GetComponentLocation(), SpawnPiont2->GetComponentRotation(), SpawnParameters);
 		//播放声音
 		//UGameplayStatics::PlaySoundAtLocation(this, ShootCue, GetActorLocation());
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Fire"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Fire"));
 		if (FireSound != nullptr)
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
@@ -144,7 +144,7 @@ void ASpaceShip::EndFire()
 {
 	//清除定时器
 	GetWorldTimerManager().ClearTimer(TimerHandle_BetweenShot);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("EndFire"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("EndFire"));
 }
 
 // Called every frame
@@ -188,11 +188,24 @@ void ASpaceShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void ASpaceShip::OnDeath()
 {
-	GEngine->AddOnScreenDebugMessage(0,3,FColor::Red,TEXT("PlayerDeath"));
+	//玩家死亡
+	IsDead = true;
+	//设置可见性
+	CollisionCom->SetVisibility(false,true);
+	UGameplayStatics::SpawnEmitterAtLocation(this,FX_Boom,GetActorLocation(),FRotator::ZeroRotator);
+	
+	//禁用物理查询防止鞭尸
+	// ShipSM->UpdateCollisionProfile();
+	ShipSM->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	//清除开火状态
+	//GetWorldTimerManager().ClearTimer(TimerHandle_BetweenShot);
+	EndFire();
+	
+	//完事禁用输入
+	DisableInput(PC);
+	//GEngine->AddOnScreenDebugMessage(0,3,FColor::Red,TEXT("PlayerDeath"));
 }
 
-bool ASpaceShip::GetBDeath()
-{
-	return IsDead;
-}
+
 

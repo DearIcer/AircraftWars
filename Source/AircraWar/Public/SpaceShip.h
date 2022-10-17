@@ -96,5 +96,9 @@ public:
 
 	void OnDeath();
 
-	bool GetBDeath();
+	//提供接口给外接知道玩家是否死亡
+	FORCEINLINE bool GetBDeath()
+	{
+		return IsDead;
+	}
 };

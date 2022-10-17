@@ -7,6 +7,7 @@
 #include<Kismet/GameplayStatics.h>
 #include "Enemy.h"
 #include"SpaceShip.h"
+#include<Engine/BlockingVolume.h>
 // Sets default values
 ABullet::ABullet()
 {
@@ -56,6 +57,10 @@ void ABullet::NotifyActorBeginOverlap(AActor* OtherActor)
 	else if(SpaceShip)
 	{
 		SpaceShip->OnDeath();
+		Destroy();
+	}
+	else if (Cast<ABlockingVolume>(OtherActor))
+	{
 		Destroy();
 	}
 	

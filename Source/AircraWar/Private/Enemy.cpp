@@ -16,6 +16,7 @@
 #include"EnemySpawner.h"
 #include "Kismet/GameplayStatics.h"
 #include<particles/ParticleSystemComponent.h>
+#include"AircraWarsGameModeBase.h"
 // Sets default values
 AEnemy::AEnemy()
 {
@@ -42,28 +43,32 @@ AEnemy::AEnemy()
 
 void AEnemy::MoveTowardsPlayer()
 {
+	if(SpaceShip->GetBDeath() != true)
+	{
+		//用玩家的位置减去角色位置等于朝向敌人的向量
+		FVector Direction = (SpaceShip->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+		//控制移动
+		AddActorWorldOffset(Direction * EnemySpeed * FApp::GetDeltaTime(), true);
+		//控制旋转
+		//获得玩家旋转向量
+		FVector TargetLocation = FVector(SpaceShip->GetActorLocation().X, SpaceShip->GetActorLocation().Y, SpaceShip->GetActorLocation().Z);
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetLocation));
+	}
 
-	//用玩家的位置减去角色位置等于朝向敌人的向量
-
-	FVector Direction = (SpaceShip->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-	//控制移动
-	AddActorWorldOffset(Direction * EnemySpeed * FApp::GetDeltaTime(), true);
-	//控制旋转
-	//获得玩家旋转向量
-	FVector TargetLocation = FVector(SpaceShip->GetActorLocation().X, SpaceShip->GetActorLocation().Y, SpaceShip->GetActorLocation().Z);
-	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetLocation));
 }
 
 void AEnemy::Fire()
 {
-	if (Bullet != nullptr)
+	if(SpaceShip->GetBDeath() != true)
 	{
-		FActorSpawnParameters SpawnParameters;
-		FVector TargetLocation = FVector(SpaceShip->GetActorLocation().X, SpaceShip->GetActorLocation().Y, SpaceShip->GetActorLocation().Z);
-		GetWorld()->SpawnActor<ABullet>(Bullet, SpawnPiont->GetComponentLocation(), UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetLocation), SpawnParameters);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("EnemyFire"));
+		if (Bullet != nullptr)
+		{
+			FActorSpawnParameters SpawnParameters;
+			FVector TargetLocation = FVector(SpaceShip->GetActorLocation().X, SpaceShip->GetActorLocation().Y, SpaceShip->GetActorLocation().Z);
+			GetWorld()->SpawnActor<ABullet>(Bullet, SpawnPiont->GetComponentLocation(), UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetLocation), SpawnParameters);
+			//GEngine->AddOnScreenDebugMessage(6, 5.f, FColor::Blue, TEXT("EnemyFire"));
+		}
 	}
-	
 }
 
 // Called when the game starts or when spawned
@@ -71,8 +76,16 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	SetColor();
+
+	//获取游戏模式
+	AWGameModeBase = Cast<AAircraWarsGameModeBase>(UGameplayStatics::GetGameMode(this));
 	//获取玩家0号
 	SpaceShip = Cast<ASpaceShip>(UGameplayStatics::GetPlayerPawn(this, 0));//强转类型
+
+	TArray<AActor*>EnemySpawnerArray;
+	UGameplayStatics::GetAllActorsOfClass(this, AEnemySpawner::StaticClass(), EnemySpawnerArray);
+	EnemySpawner = Cast<AEnemySpawner>(EnemySpawnerArray[0]);
+	
 	//创建敌人开火定时器
 	GetWorldTimerManager().SetTimer(TimerHandle_BetweenShot, this, &AEnemy::Fire, Time_BetweenShot, true, 0.0f);
 
@@ -91,12 +104,18 @@ void AEnemy::Tick(float DeltaTime)
 
 void AEnemy::OnDeath()
 {
-	GEngine->AddOnScreenDebugMessage(0,3,FColor::Red,TEXT("EnemyDeath"));
+	//GEngine->AddOnScreenDebugMessage(0,3,FColor::Red,TEXT("EnemyDeath"));
+	//加分
+	if(AWGameModeBase)
+	{
+		AWGameModeBase->IncreaseScore();
+	}
 	if(FX_Boom != nullptr)
 	{
 		GetWorldTimerManager().ClearTimer(TimerHandle_BetweenShot);
 		UGameplayStatics::SpawnEmitterAtLocation(this,FX_Boom,GetActorLocation(),FRotator::ZeroRotator);
 		Destroy();
 	}
+
 }
 
