@@ -9,10 +9,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include"Bullet.h"
-#include "ammo.h"
 #include "TimerManager.h"
 #include "Engine/World.h"
 #include<Sound/SoundCue.h>
+#include "Enemy.h"
 // Sets default values
 ASpaceShip::ASpaceShip()
 {
@@ -130,6 +130,9 @@ void ASpaceShip::Fire()
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 		}
+
+		//定时器异常？？嗯排查到Bug了，ue的输入模式冲突了，无语
+		//GEngine->AddOnScreenDebugMessage(1,3,FColor::Red,FString::SanitizeFloat(Time_BetweenShot));
 	}
 }
 
@@ -184,6 +187,22 @@ void ASpaceShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	//开火绑定
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ASpaceShip::StarFire);//按下持续开火
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ASpaceShip::EndFire);//松开结束开火
+}
+
+void ASpaceShip::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	//如果碰到敌机，那就寄
+	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
+	if(Enemy)
+	{
+		//敌机也销毁
+		Enemy->OnDeath();
+
+		//触发自身寄寄函数
+		OnDeath();
+	}
 }
 
 void ASpaceShip::OnDeath()

@@ -15,9 +15,14 @@ class AIRCRAWAR_API AAircraWarsGameModeBase : public AGameModeBase
 	AAircraWarsGameModeBase();
 	GENERATED_BODY()
 protected:
+	virtual void Tick(float DeltaTime) override;
+	
 	virtual void BeginPlay() override;
 	UPROPERTY(BlueprintReadOnly, Category = "Score")
 	int Score;
+
+	UPROPERTY(BlueprintReadWrite,Category = "ImGui")
+	bool ShowConsole;
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void ShowHUD();
@@ -26,4 +31,7 @@ public:
 	int GetScore();
 	
 	void IncreaseScore();
+
+	UFUNCTION(BlueprintCallable)
+	void ShowImGuiWindows();
 };

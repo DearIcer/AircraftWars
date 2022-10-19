@@ -93,11 +93,13 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 	void OnDeath();
 
 	//提供接口给外接知道玩家是否死亡
-	FORCEINLINE bool GetBDeath()
+	UFUNCTION(BlueprintCallable)
+	bool GetBDeath()
 	{
 		return IsDead;
 	}
